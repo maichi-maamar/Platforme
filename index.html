@@ -188,66 +188,6 @@ showAds("publicites_gold","goldAds");
 showAds("publicites_silver","silverAds");
 showAds("publicites_bronze","bronzeAds");
 
-
-// ===== POMPES CONVENTIONNÉES =====
-
-let pumpsData = [];
-
-loadCSV("pompes_conventionnees", data => {
-    pumpsData = data;
-});
-
-function getDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a =
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) *
-        Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-}
-
-function findNearestPump() {
-
-    if (!navigator.geolocation) {
-        alert("La géolocalisation n'est pas supportée.");
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(position => {
-
-        const userLat = position.coords.latitude;
-        const userLon = position.coords.longitude;
-
-        let nearest = null;
-        let minDistance = Infinity;
-
-        pumpsData.forEach(pump => {
-
-            const distance = getDistance(
-                userLat,
-                userLon,
-                parseFloat(pump.latitude),
-                parseFloat(pump.longitude)
-            );
-
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearest = pump;
-            }
-        });
-
-        if (nearest) {
-            const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${nearest.latitude},${nearest.longitude}`;
-            window.open(mapsUrl, "_blank");
-        }
-
-    }, error => {
-        alert("Activez la localisation pour trouver la pompe la plus proche.");
-    });
     }
     
 </script>
