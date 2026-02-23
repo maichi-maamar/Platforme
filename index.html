@@ -2,81 +2,219 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Plateforme Chauffeur</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yassir Driver Premium</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
 body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
-    color: white;
-    overflow-x: hidden;
+    margin:0;
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(135deg,#0f0f0f,#1c1c1c);
+    color:white;
 }
 
-/* Logo arrière-plan */
-.background-logo {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    opacity: 0.05;   /* Transparence premium */
-    filter: blur(2px);
-    z-index: 0;
+.bg-logo{
+    position:fixed;
+    top:50%;
+    left:50%;
+    width:80%;
+    transform:translate(-50%,-50%);
+    opacity:0.04;
+    z-index:0;
 }
 
-.container {
-    position: relative;
-    z-index: 1;
-    padding: 40px;
+.container{
+    position:relative;
+    z-index:1;
+    padding:25px;
+    max-width:500px;
+    margin:auto;
 }
 
-/* Carte chauffeur */
-.card {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(15px);
-    border-radius: 20px;
-    padding: 25px;
-    margin-bottom: 30px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+.card{
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(15px);
+    border-radius:25px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 15px 50px rgba(0,0,0,0.6);
 }
 
-/* Sponsoring */
+.status{
+    display:inline-block;
+    margin-top:10px;
+    padding:6px 15px;
+    border-radius:50px;
+    background:#00ff9d;
+    color:black;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.section-title{
+    margin:20px 0 10px;
+    font-weight:600;
+}
+
 .sponsor {
-    padding: 20px;
-    border-radius: 15px;
-    margin: 10px 0;
-    font-weight: bold;
+    padding:15px;
+    border-radius:20px;
+    margin-bottom:15px;
 }
 
-.bronze { background: linear-gradient(45deg,#cd7f32,#8b5a2b); }
-.silver { background: linear-gradient(45deg,#c0c0c0,#7d7d7d); }
-.gold   { background: linear-gradient(45deg,#FFD700,#b8860b); }
+.gold-container {
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+.gold-item {
+    position:relative;
+    border-radius:15px;
+    overflow:hidden;
+    cursor:pointer;
+}
+
+.gold-item img {
+    width:100%;
+    display:block;
+    border-radius:15px;
+}
+
+/* Bouton localisation au-dessus de l'image */
+.loc-btn {
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:#00ff9d;
+    color:black;
+    padding:6px 12px;
+    border-radius:50px;
+    font-size:12px;
+    font-weight:bold;
+    text-decoration:none;
+    z-index:2;
+}
+
+.silver a, .bronze a{
+    display:block;
+    margin-top:8px;
+    text-decoration:none;
+    color:inherit;
+    font-weight:500;
+}
 
 </style>
 </head>
 
 <body>
 
-<img src="logo-yassir.png" class="background-logo">
+<img src="logo-yassir.png" class="bg-logo">
 
 <div class="container">
 
-<h1>Espace Chauffeur</h1>
-
 <div class="card">
-Nom : Ahmed Benali<br>
-ID : 4589A7K<br>
-Statut : Actif
+    <h2 id="driverName">Chargement...</h2>
+    <p>ID : <span id="driverId"></span></p>
+    <div class="status" id="driverStatus"></div>
 </div>
 
-<h2>Publicités Sponsorisé</h2>
+<!-- GOLD -->
+<div class="section-title">Publicité GOLD</div>
+<div class="gold-container" id="goldAds"></div>
 
-<div class="sponsor bronze">Pack Bronze</div>
-<div class="sponsor silver">Pack Argent</div>
-<div class="sponsor gold">Pack Gold</div>
+<!-- SILVER -->
+<div class="section-title">Publicité SILVER</div>
+<div class="sponsor silver" id="silverAds"></div>
+
+<!-- BRONZE -->
+<div class="section-title">Publicité BRONZE</div>
+<div class="sponsor bronze" id="bronzeAds"></div>
 
 </div>
+
+<script>
+// === Base chauffeurs ===
+const drivers = {
+    "4589A7K": { name: "Ahmed Benali", status: "ACTIF" },
+    "7852LMN": { name: "Karim Touati", status: "ACTIF" },
+    "9631XYZ": { name: "Samir Haddad", status: "SUSPENDU" }
+};
+
+// === Publicités ===
+const ads = {
+    gold: [
+        {
+            name:"Station Premium",
+            link:"https://example.com/shop1",
+            img:"https://via.placeholder.com/400x200?text=Station+Premium",
+            location:"https://www.google.com/maps?q=36.7538,3.0588"
+        },
+        {
+            name:"Assurance Pro+",
+            link:"https://example.com/shop2",
+            img:"https://via.placeholder.com/400x200?text=Assurance+Pro+",
+            location:"https://www.google.com/maps?q=36.752,3.05"
+        },
+        {
+            name:"Crédit Auto VIP",
+            link:"https://example.com/shop3",
+            img:"https://via.placeholder.com/400x200?text=Crédit+Auto+VIP",
+            location:"https://www.google.com/maps?q=36.76,3.06"
+        }
+    ],
+    silver:[
+        {name:"Lavage Auto", link:"https://example.com",},
+        {name:"Pneus Discount", link:"https://example.com",},
+        {name:"Garage Express", link:"https://example.com",}
+    ],
+    bronze:[
+        {name:"Snack Local", link:"https://example.com",},
+        {name:"Café Route", link:"https://example.com",},
+        {name:"Accessoires Auto", link:"https://example.com",}
+    ]
+};
+
+// === Lire ID ===
+const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get("id");
+
+if(drivers[id]){
+    document.getElementById("driverName").innerText = drivers[id].name;
+    document.getElementById("driverStatus").innerText = drivers[id].status;
+    document.getElementById("driverId").innerText = id;
+}else{
+    document.getElementById("driverName").innerText="Chauffeur introuvable";
+    document.getElementById("driverStatus").innerText="INCONNU";
+}
+
+// === Affichage GOLD dynamique ===
+const goldContainer = document.getElementById("goldAds");
+ads.gold.forEach(ad=>{
+    const div = document.createElement("div");
+    div.className="gold-item";
+    div.innerHTML = `
+        <a href="${ad.location}" class="loc-btn" target="_blank">📍 Localisation</a>
+        <a href="${ad.link}" target="_blank">
+            <img src="${ad.img}" alt="${ad.name}">
+        </a>
+    `;
+    goldContainer.appendChild(div);
+});
+
+// === Affichage Silver / Bronze ===
+function loadAds(type, elementId){
+    let container = document.getElementById(elementId);
+    ads[type].forEach(ad=>{
+        container.innerHTML += `<a href="${ad.link}" target="_blank">${ad.name}</a>`;
+    });
+}
+loadAds("silver","silverAds");
+loadAds("bronze","bronzeAds");
+
+</script>
 
 </body>
 </html>
