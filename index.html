@@ -2,43 +2,198 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>JS Kabylie | Carte NFC Supporter</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yassir Driver Premium</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
 <style>
-*{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#FFD700,#0B7A3B);display:flex;align-items:center;justify-content:center}
-.card{width:360px;padding:25px;border-radius:25px;background:rgba(0,0,0,.45);backdrop-filter:blur(15px);box-shadow:0 20px 40px rgba(0,0,0,.6);text-align:center;color:#fff}
-.logo{width:140px;margin-bottom:10px}
-h1{font-size:24px;margin:5px 0}
-.badge{display:inline-block;background:linear-gradient(45deg,#FFD700,#fff);color:#000;padding:6px 14px;border-radius:30px;font-size:12px;font-weight:bold;margin-bottom:20px}
-.section{margin-top:22px}
-.section h2{font-size:16px;margin-bottom:10px;color:#FFD700}
-.btn{display:block;background:linear-gradient(135deg,#FFD700,#ffe97f);color:#000;padding:14px;border-radius:15px;text-decoration:none;font-weight:bold;margin:10px 0}
-.footer{margin-top:20px;font-size:12px;opacity:.85}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg,#0f0f0f,#1b1b1b);
+    color: white;
+    overflow-x: hidden;
+}
+
+/* Background animated logo */
+.bg-logo {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 70%;
+    transform: translate(-50%, -50%);
+    opacity: 0.04;
+    animation: rotateLogo 40s linear infinite;
+    z-index: 0;
+}
+
+@keyframes rotateLogo {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.container {
+    position: relative;
+    z-index: 1;
+    padding: 25px;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header h1 {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.status {
+    background: #00ff9d;
+    padding: 6px 15px;
+    border-radius: 50px;
+    font-size: 12px;
+    color: black;
+    font-weight: bold;
+}
+
+/* Glass card */
+.card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(15px);
+    border-radius: 25px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+    transition: 0.4s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Cashback display */
+.cashback {
+    font-size: 32px;
+    font-weight: 700;
+    margin-top: 10px;
+    color: #00ff9d;
+}
+
+/* Sponsor cards */
+.sponsor-container {
+    display: grid;
+    gap: 15px;
+}
+
+.sponsor {
+    padding: 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.sponsor:hover {
+    transform: scale(1.05);
+}
+
+.bronze {
+    background: linear-gradient(45deg,#cd7f32,#8b5a2b);
+}
+
+.silver {
+    background: linear-gradient(45deg,#c0c0c0,#7d7d7d);
+}
+
+.gold {
+    background: linear-gradient(45deg,#FFD700,#b8860b);
+    color: black;
+}
+
+/* Button */
+.btn {
+    margin-top: 15px;
+    padding: 12px;
+    width: 100%;
+    border-radius: 50px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    background: #00ff9d;
+    color: black;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #00cc7a;
+}
+
+/* Responsive */
+@media(max-width:600px){
+    .header h1 { font-size:18px; }
+}
 </style>
 </head>
+
 <body>
+
+<!-- Logo background -->
+<img src="logo-yassir.png" class="bg-logo">
+
+<div class="container">
+
+<div class="header">
+    <h1>Dashboard Chauffeur</h1>
+    <div class="status">ACTIF</div>
+</div>
+
 <div class="card">
-<img src="logo-jsk.png" alt="JS Kabylie" class="logo">
-<h1>JS Kabylie</h1>
-<div class="badge">Carte NFC Supporter Premium</div>
-<div class="section">
-<h2>📞 Téléphone</h2>
-<a class="btn" href="tel:+213000000000">+213 00 00 00 00</a>
+    <h2>Ahmed Benali</h2>
+    <p>ID: 4589A7K</p>
+    <div class="cashback" id="cashback">0 DA</div>
+    <button class="btn" onclick="simulateCashback()">Simuler cashback +3%</button>
 </div>
-<div class="section">
-<h2>🌍 Réseaux Sociaux</h2>
-<a class="btn" href="https://www.instagram.com/jskofficiel" target="_blank">Instagram</a>
-<a class="btn" href="https://www.facebook.com/Jskabylie" target="_blank">Facebook</a>
-<a class="btn" href="https://www.tiktok.com/@jskabylie" target="_blank">TikTok</a>
+
+<div class="card">
+    <h2>Publicités Sponsorisées</h2>
+
+    <div class="sponsor-container">
+        <div class="sponsor bronze">
+            Bronze – 5 000 DA / mois
+        </div>
+
+        <div class="sponsor silver">
+            Argent – 10 000 DA / mois
+        </div>
+
+        <div class="sponsor gold">
+            Gold – 20 000 DA / mois
+        </div>
+    </div>
 </div>
-<div class="section">
-<h2>📊 Actualités</h2>
-<a class="btn" href="https://www.facebook.com/Jskabylie" target="_blank">Classement JSK</a>
-<a class="btn" href="https://www.facebook.com/Jskabylie" target="_blank">Calendrier des matchs</a>
-<a class="btn" href="https://www.facebook.com/Jskabylie" target="_blank">Nouveautés Facebook</a>
+
 </div>
-<div class="footer">💛💚 JSK FOREVER – Fier d’être Kabyle</div>
-</div>
+
+<script>
+let total = 0;
+
+function simulateCashback(){
+    let trip = 1000; // exemple course 1000 DA
+    let cashback = trip * 0.03;
+    total += cashback;
+    document.getElementById("cashback").innerText = total.toFixed(2) + " DA";
+}
+</script>
+
 </body>
 </html>
