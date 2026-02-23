@@ -3,210 +3,173 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yassir Driver Premium</title>
+<title>Plateforme Chauffeur Yassir Premium</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
-/* Corps de la page avec image de fond */
+/* Arrière‑plan image full page */
 body {
-    margin:0;
-    font-family:'Poppins',sans-serif;
-    background: url('IMG_20260223_103833.jpg') no-repeat center center fixed;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: url('background.jpg') no-repeat center center fixed;
     background-size: cover;
-    color:white;
+    color: white;
 }
 
 /* Container principal */
-.container{
-    max-width:500px;
-    margin:auto;
-    padding:25px;
+.container {
+    max-width: 550px;
+    margin: auto;
+    padding: 25px;
+}
+
+/* Carte chauffeur */
+.card {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+}
+
+.status {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 15px;
+    border-radius: 50px;
+    background: #00ff9d;
+    color: black;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Titres de sections */
+.section-title {
+    margin: 20px 0 10px;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Grille publicités */
+.promo-grid {
+    display: grid;
+    gap: 20px;
+}
+
+/* Pub individuelle */
+.promo-item {
     position: relative;
-    z-index:1;
-}
-
-/* Carte chauffeur et cartes publicités */
-.card{
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(15px);
-    border-radius:25px;
-    padding:25px;
-    margin-bottom:25px;
-    box-shadow:0 15px 50px rgba(0,0,0,0.6);
-}
-
-/* Statut actif */
-.status{
-    display:inline-block;
-    margin-top:10px;
-    padding:6px 15px;
-    border-radius:50px;
-    background:#00ff9d;
-    color:black;
-    font-size:12px;
-    font-weight:bold;
-}
-
-/* Titres des sections publicités */
-.section-title{
-    margin:20px 0 10px;
-    font-weight:600;
-}
-
-/* Conteneur publicités Gold */
-.gold-container {
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-}
-
-/* Item Gold avec image */
-.gold-item {
-    position:relative;
-    border-radius:15px;
-    overflow:hidden;
-    cursor:pointer;
-}
-
-.gold-item img {
-    width:100%;
-    display:block;
-    border-radius:15px;
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
 }
 
 /* Bouton localisation */
 .loc-btn {
-    position:absolute;
-    top:10px;
-    right:10px;
-    background:#00ff9d;
-    color:black;
-    padding:6px 12px;
-    border-radius:50px;
-    font-size:12px;
-    font-weight:bold;
-    text-decoration:none;
-    z-index:2;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #00ff9d;
+    color: black;
+    padding: 8px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+    z-index: 2;
 }
 
-/* Silver et Bronze simples */
-.silver a, .bronze a{
-    display:block;
-    margin-top:8px;
-    text-decoration:none;
-    color:inherit;
-    font-weight:500;
+.promo-item img {
+    width: 100%;
+    display: block;
+    border-radius: 15px;
 }
-
-/* Couleurs des sponsors */
-.gold{color:black;}
-.silver{color:white;}
-.bronze{color:white;}
 </style>
+
 </head>
 <body>
 
 <div class="container">
 
-<!-- Carte chauffeur -->
-<div class="card">
-    <h2 id="driverName">Chargement...</h2>
-    <p>ID : <span id="driverId"></span></p>
-    <div class="status" id="driverStatus"></div>
+    <!-- PROFIL CHAUFFEUR -->
+    <div class="card">
+        <h2 id="driverName">Chargement chauffeur...</h2>
+        <p>ID : <span id="driverId"></span></p>
+        <div class="status" id="driverStatus"></div>
+    </div>
+
+    <!-- PUBLICITÉS GOLD -->
+    <div class="section-title">Offres GOLD</div>
+    <div class="promo-grid" id="goldAds"></div>
+
+    <!-- PUBLICITÉS SILVER -->
+    <div class="section-title">Offres SILVER</div>
+    <div class="promo-grid" id="silverAds"></div>
+
+    <!-- PUBLICITÉS BRONZE -->
+    <div class="section-title">Offres BRONZE</div>
+    <div class="promo-grid" id="bronzeAds"></div>
+
 </div>
 
-<!-- GOLD -->
-<div class="section-title">Publicité GOLD</div>
-<div class="gold-container" id="goldAds"></div>
-
-<!-- SILVER -->
-<div class="section-title">Publicité SILVER</div>
-<div class="card silver" id="silverAds"></div>
-
-<!-- BRONZE -->
-<div class="section-title">Publicité BRONZE</div>
-<div class="card bronze" id="bronzeAds"></div>
-
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 <script>
-// === Base chauffeurs ===
-const drivers = {
-    "4589A7K": { name: "Ahmed Benali", status: "ACTIF" },
-    "7852LMN": { name: "Karim Touati", status: "ACTIF" },
-    "9631XYZ": { name: "Samir Haddad", status: "SUSPENDU" }
-};
 
-// === Publicités ===
-const ads = {
-    gold: [
-        {
-            name:"Station Premium",
-            link:"https://example.com/shop1",
-            img:"https://via.placeholder.com/400x200?text=Station+Premium",
-            location:"https://www.google.com/maps?q=36.7538,3.0588"
-        },
-        {
-            name:"Assurance Pro+",
-            link:"https://example.com/shop2",
-            img:"https://via.placeholder.com/400x200?text=Assurance+Pro+",
-            location:"https://www.google.com/maps?q=36.752,3.05"
-        },
-        {
-            name:"Crédit Auto VIP",
-            link:"https://example.com/shop3",
-            img:"https://via.placeholder.com/400x200?text=Crédit+Auto+VIP",
-            location:"https://www.google.com/maps?q=36.76,3.06"
-        }
-    ],
-    silver:[
-        {name:"Lavage Auto", link:"https://example.com"},
-        {name:"Pneus Discount", link:"https://example.com"},
-        {name:"Garage Express", link:"https://example.com"}
-    ],
-    bronze:[
-        {name:"Snack Local", link:"https://example.com"},
-        {name:"Café Route", link:"https://example.com"},
-        {name:"Accessoires Auto", link:"https://example.com"}
-    ]
-};
+// ⚙️ Google Sheet ID
+const SHEET_ID = "TON_ID"; // ← Remplace TON_ID par l’ID de ton Google Sheet
+const sheetBase = `https://docs.google.com/spreadsheets/d/e/2PACX-1vSXrcDrR2-JCU7DLzRH1C8wTozquzcEhmjHCVzWQR16M2c5jpdqI3fwLKb0fJgChgJHy6Vx5OuRRxFO/pub?output=ods`;
 
-// === Lire ID depuis URL ===
-const urlParams = new URLSearchParams(window.location.search);
-const id = urlParams.get("id");
+// 💡 Lire ID depuis URL
+const params = new URLSearchParams(window.location.search);
+const driverId = params.get("id");
 
-// === Affichage chauffeur dynamique ===
-if(drivers[id]){
-    document.getElementById("driverName").innerText = drivers[id].name;
-    document.getElementById("driverStatus").innerText = drivers[id].status;
-    document.getElementById("driverId").innerText = id;
-}else{
-    document.getElementById("driverName").innerText = "Chauffeur introuvable";
-    document.getElementById("driverStatus").innerText = "INCONNU";
-}
-
-// === Affichage GOLD dynamique avec images + localisation ===
-const goldContainer = document.getElementById("goldAds");
-ads.gold.forEach(ad=>{
-    const div = document.createElement("div");
-    div.className="gold-item";
-    div.innerHTML = `
-        <a href="${ad.location}" class="loc-btn" target="_blank">📍 Localisation</a>
-        <a href="${ad.link}" target="_blank">
-            <img src="${ad.img}" alt="${ad.name}">
-        </a>
-    `;
-    goldContainer.appendChild(div);
-});
-
-// === Affichage Silver / Bronze ===
-function loadAds(type, elementId){
-    let container = document.getElementById(elementId);
-    ads[type].forEach(ad=>{
-        container.innerHTML += `<a href="${ad.link}" target="_blank">${ad.name}</a>`;
+// 📌 Charger CSV depuis Google Sheets
+function loadCSV(sheetName, callback){
+    Papa.parse(sheetBase + sheetName, {
+        download: true,
+        header: true,
+        complete: results => callback(results.data)
     });
 }
-loadAds("silver","silverAds");
-loadAds("bronze","bronzeAds");
+
+// 🧍‍♂️ Charger chauffeurs
+loadCSV("chauffeurs", chauffeurs => {
+    const driver = chauffeurs.find(c => c.id === driverId);
+    if(driver){
+        document.getElementById("driverName").innerText = driver.nom + " " + driver.prenom;
+        document.getElementById("driverStatus").innerText = driver.statut;
+        document.getElementById("driverId").innerText = driver.id;
+    } else {
+        document.getElementById("driverName").innerText = "Chauffeur non trouvé";
+        document.getElementById("driverStatus").innerText = "";
+    }
+});
+
+// 📸 Afficher Gold/Silver/Bronze
+function showAds(sheet, elementId){
+    loadCSV(sheet, data => {
+        const container = document.getElementById(elementId);
+        data.forEach(ad => {
+            const promo = document.createElement("div");
+            promo.className = "promo-item";
+            promo.innerHTML = `
+                <a href="${ad.localisation}" class="loc-btn" target="_blank">📍 Localiser</a>
+                <a href="${ad.lien_boutique}" target="_blank">
+                    <img src="${ad.image_URL}" alt="${ad.nom}">
+                </a>
+            `;
+            container.appendChild(promo);
+        });
+    });
+}
+
+showAds("publicites_gold","goldAds");
+showAds("publicites_silver","silverAds");
+showAds("publicites_bronze","bronzeAds");
+
 </script>
 
 </body>
