@@ -2,198 +2,81 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yassir Driver Premium</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>Plateforme Chauffeur</title>
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
 body {
-    background: linear-gradient(135deg,#0f0f0f,#1b1b1b);
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
     color: white;
     overflow-x: hidden;
 }
 
-/* Background animated logo */
-.bg-logo {
+/* Logo arrière-plan */
+.background-logo {
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 70%;
     transform: translate(-50%, -50%);
-    opacity: 0.04;
-    animation: rotateLogo 40s linear infinite;
+    width: 80%;
+    opacity: 0.05;   /* Transparence premium */
+    filter: blur(2px);
     z-index: 0;
-}
-
-@keyframes rotateLogo {
-    from { transform: translate(-50%, -50%) rotate(0deg); }
-    to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 .container {
     position: relative;
     z-index: 1;
-    padding: 25px;
+    padding: 40px;
 }
 
-/* Header */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
-
-.header h1 {
-    font-size: 22px;
-    font-weight: 600;
-}
-
-.status {
-    background: #00ff9d;
-    padding: 6px 15px;
-    border-radius: 50px;
-    font-size: 12px;
-    color: black;
-    font-weight: bold;
-}
-
-/* Glass card */
+/* Carte chauffeur */
 .card {
     background: rgba(255,255,255,0.05);
     backdrop-filter: blur(15px);
-    border-radius: 25px;
+    border-radius: 20px;
     padding: 25px;
-    margin-bottom: 25px;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.6);
-    transition: 0.4s;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
 }
 
-.card:hover {
-    transform: translateY(-5px);
-}
-
-/* Cashback display */
-.cashback {
-    font-size: 32px;
-    font-weight: 700;
-    margin-top: 10px;
-    color: #00ff9d;
-}
-
-/* Sponsor cards */
-.sponsor-container {
-    display: grid;
-    gap: 15px;
-}
-
+/* Sponsoring */
 .sponsor {
     padding: 20px;
-    border-radius: 20px;
-    font-weight: 600;
-    transition: 0.3s;
-    cursor: pointer;
-}
+    border-radius: 15px;
+    margin: 10px 0;
+    font-weight: bold;
+}cw
 
-.sponsor:hover {
-    transform: scale(1.05);
-}
+.bronze { background: linear-gradient(45deg,#cd7f32,#8b5a2b); }
+.silver { background: linear-gradient(45deg,#c0c0c0,#7d7d7d); }
+.gold   { background: linear-gradient(45deg,#FFD700,#b8860b); }
 
-.bronze {
-    background: linear-gradient(45deg,#cd7f32,#8b5a2b);
-}
-
-.silver {
-    background: linear-gradient(45deg,#c0c0c0,#7d7d7d);
-}
-
-.gold {
-    background: linear-gradient(45deg,#FFD700,#b8860b);
-    color: black;
-}
-
-/* Button */
-.btn {
-    margin-top: 15px;
-    padding: 12px;
-    width: 100%;
-    border-radius: 50px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    background: #00ff9d;
-    color: black;
-    transition: 0.3s;
-}
-
-.btn:hover {
-    background: #00cc7a;
-}
-
-/* Responsive */
-@media(max-width:600px){
-    .header h1 { font-size:18px; }
-}
 </style>
 </head>
 
 <body>
 
-<!-- Logo background -->
-<img src="logo-yassir.png" class="bg-logo">
+<img src="logo-yassir.png" class="background-logo">
 
 <div class="container">
 
-<div class="header">
-    <h1>Dashboard Chauffeur</h1>
-    <div class="status">ACTIF</div>
-</div>
+<h1>Espace Chauffeur</h1>
 
 <div class="card">
-    <h2>Ahmed Benali</h2>
-    <p>ID: 4589A7K</p>
-    <div class="cashback" id="cashback">0 DA</div>
-    <button class="btn" onclick="simulateCashback()">Simuler cashback +3%</button>
+Nom : Ahmed Benali<br>
+ID : 4589A7K<br>
+Statut : Actif
 </div>
 
-<div class="card">
-    <h2>Publicités Sponsorisées</h2>
+<h2>Publicités Sponsorisé</h2>
 
-    <div class="sponsor-container">
-        <div class="sponsor bronze">
-            Bronze – 5 000 DA / mois
-        </div>
-
-        <div class="sponsor silver">
-            Argent – 10 000 DA / mois
-        </div>
-
-        <div class="sponsor gold">
-            Gold – 20 000 DA / mois
-        </div>
-    </div>
-</div>
+<div class="sponsor bronze">Pack Bronze</div>
+<div class="sponsor silver">Pack Argent</div>
+<div class="sponsor gold">Pack Gold</div>
 
 </div>
-
-<script>
-let total = 0;
-
-function simulateCashback(){
-    let trip = 1000; // exemple course 1000 DA
-    let cashback = trip * 0.03;
-    total += cashback;
-    document.getElementById("cashback").innerText = total.toFixed(2) + " DA";
-}
-</script>
 
 </body>
-</html>
+</html>so
