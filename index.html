@@ -87,10 +87,11 @@ body {
 <div class="container">
 
     <div class="card">
-        <h2 id="driverName">Chauffeur Premium</h2>
-       
-        <div class="status">ACTIF</div>
-    </div>
+    <h3 id="driverTitle">Chauffeur Yassir</h3>
+    <h2 id="driverName">Chargement chauffeur...</h2>
+    <p>ID : <span id="driverId">---</span></p>
+    <div class="status" id="driverStatus"></div>
+</div>
 
 <div class="section-title">Offres GOLD</div>
     <div class="promo-grid" id="goldAds"></div>
@@ -144,14 +145,23 @@ function loadCSV(sheetName, callback){
 
 loadCSV("chauffeurs", chauffeurs => {
 
-    const driver = chauffeurs.find(c => c.id === driverId);
+    if(!driverId){
+        document.getElementById("driverId").innerText = "Non fourni";
+        return;
+    }
+
+    const driver = chauffeurs.find(c => 
+        (c.id && c.id.trim() === driverId.trim()) ||
+        (c.ID && c.ID.trim() === driverId.trim())
+    );
 
     if(driver){
         document.getElementById("driverName").innerText = driver.nom + " " + driver.prenom;
         document.getElementById("driverStatus").innerText = driver.statut;
-       
+        document.getElementById("driverId").innerText = driver.id || driver.ID;
     } else {
         document.getElementById("driverName").innerText = "Chauffeur non trouvé";
+        document.getElementById("driverId").innerText = driverId;
     }
 });
 
