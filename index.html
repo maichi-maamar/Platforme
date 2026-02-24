@@ -129,6 +129,42 @@ body {
 
 </div>
 
+<!-- POPUP BRONZE -->
+<div id="bronzePopup" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.9);
+z-index:9999;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+">
+
+    <img id="popupImage" src="" style="
+        max-width:90%;
+        max-height:75%;
+        border-radius:20px;
+        margin-bottom:20px;
+    ">
+
+    <a id="callSellerBtn" href="#" style="
+        background:#00ff9d;
+        color:black;
+        padding:15px 25px;
+        border-radius:30px;
+        font-weight:bold;
+        text-decoration:none;
+        font-size:16px;
+    ">
+        📞 Appeler vendeur
+    </a>
+
+</div>
+    
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
 <script>
@@ -196,23 +232,29 @@ function showAds(sheet, elementId){
             const promo = document.createElement("div");
             promo.className = "promo-item";
 
-            // 🔥 Ne pas afficher le bouton pour BRONZE
-            let localisationButton = "";
-
+            // ================= GOLD & SILVER =================
             if(sheet !== "publicites_bronze"){
-                localisationButton = `
+
+                promo.innerHTML = `
                     <a href="${ad.localisation}" class="loc-btn" target="_blank">
                         📍 Localiser
                     </a>
+                    <a href="${ad.lien_boutique}" target="_blank">
+                        <img src="${ad.image_URL}" alt="${ad.nom}">
+                    </a>
+                `;
+
+            } 
+            // ================= BRONZE =================
+            else {
+
+                promo.innerHTML = `
+                    <img src="${ad.image_URL}" 
+                         alt="${ad.nom}" 
+                         style="cursor:pointer"
+                         onclick="openBronzePopup('${ad.image_URL}','${ad.telephone}')">
                 `;
             }
-
-            promo.innerHTML = `
-                ${localisationButton}
-                <a href="${ad.lien_boutique}" target="_blank">
-                    <img src="${ad.image_URL}" alt="${ad.nom}">
-                </a>
-            `;
 
             container.appendChild(promo);
         });
@@ -327,6 +369,27 @@ function findNearestPump() {
         alert("Activez la localisation pour trouver la pompe la plus proche.");
     });
 }
+
+function openBronzePopup(imageUrl, phone){
+
+    document.getElementById("popupImage").src = imageUrl;
+
+    if(phone && phone.trim() !== ""){
+        document.getElementById("callSellerBtn").href = "tel:" + phone;
+        document.getElementById("callSellerBtn").style.display = "inline-block";
+    } else {
+        document.getElementById("callSellerBtn").style.display = "none";
+    }
+
+    document.getElementById("bronzePopup").style.display = "flex";
+}
+
+// Fermer popup quand on clique en dehors
+document.getElementById("bronzePopup").addEventListener("click", function(e){
+    if(e.target.id === "bronzePopup"){
+        this.style.display = "none";
+    }
+});
 
 </script>
 
