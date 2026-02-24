@@ -149,7 +149,7 @@ loadCSV("chauffeurs", chauffeurs => {
     if(driver){
         document.getElementById("driverName").innerText = driver.nom + " " + driver.prenom;
         document.getElementById("driverStatus").innerText = driver.statut;
-        document.getElementById("driverId").innerText = driver.id;
+       
     } else {
         document.getElementById("driverName").innerText = "Chauffeur non trouvé";
     }
