@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plateforme Chauffeur Yassir Premium </title>
+<title>Plateforme Chauffeur Yassir Premium</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -79,7 +79,8 @@ body {
     display: block;
     border-radius: 15px;
 }
- .driver-photo {
+
+.driver-photo {
     width: 120px;
     height: 120px;
     border-radius: 50%;
@@ -89,6 +90,53 @@ body {
     display: block;
 }
 
+/* Badge GOLD animé */
+.gold-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(45deg, gold, orange);
+    color: black;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 3;
+    animation: glow 1.5s infinite alternate;
+}
+
+/* Glow animation */
+@keyframes glow {
+    from { box-shadow: 0 0 5px gold; }
+    to { box-shadow: 0 0 20px orange; }
+}
+
+/* Boutons GOLD en bas */
+.gold-btns {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.gold-btns a {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gold-btns a:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px gold;
+}
+
+.gold-btns .whatsapp { background: #25D366; color: white; }
+.gold-btns .call { background: #00ff9d; }
+.gold-btns .shop { background: #FFD700; color: black; }
 </style>
 </head>
 
@@ -97,14 +145,14 @@ body {
 <div class="container">
 
     <div class="card">
-    <h3 id="driverTitle">Chauffeur Yassir</h3>
-    <img id="driverPhoto" src="" alt="Photo chauffeur" class="driver-photo">
-    <h2 id="driverName">Chargement chauffeur...</h2>
-    <p>ID : <span id="driverId">---</span></p>
-    <div class="status" id="driverStatus"></div>
-</div>
+        <h3 id="driverTitle">Chauffeur Yassir</h3>
+        <img id="driverPhoto" src="" alt="Photo chauffeur" class="driver-photo">
+        <h2 id="driverName">Chargement chauffeur...</h2>
+        <p>ID : <span id="driverId">---</span></p>
+        <div class="status" id="driverStatus"></div>
+    </div>
 
-<div class="section-title">Offres GOLD</div>
+    <div class="section-title">Offres GOLD</div>
     <div class="promo-grid" id="goldAds"></div>
 
     <div class="section-title">Offres SILVER</div>
@@ -113,21 +161,18 @@ body {
     <div class="section-title">Offres BRONZE</div>
     <div class="promo-grid" id="bronzeAds"></div>
     
-    
     <div class="section-title">⛽ Pompes Conventionnées</div>
-
     <button onclick="findNearestPump()" style="
-    padding:15px;
-    border-radius:30px;
-    background:#00ff9d;
-    border:none;
-    font-weight:bold;
-    width:100%;
-    margin-bottom:20px;
-    cursor:pointer;">
-    🚗 Trouver la pompe la plus proche
+        padding:15px;
+        border-radius:30px;
+        background:#00ff9d;
+        border:none;
+        font-weight:bold;
+        width:100%;
+        margin-bottom:20px;
+        cursor:pointer;">
+        🚗 Trouver la pompe la plus proche
     </button>
-
 </div>
 
 <!-- POPUP BRONZE -->
@@ -144,14 +189,12 @@ justify-content:center;
 align-items:center;
 flex-direction:column;
 ">
-
     <img id="popupImage" src="" style="
         max-width:90%;
         max-height:75%;
         border-radius:20px;
         margin-bottom:20px;
     ">
-
     <a id="callSellerBtn" href="#" style="
         background:#00ff9d;
         color:black;
@@ -160,25 +203,18 @@ flex-direction:column;
         font-weight:bold;
         text-decoration:none;
         font-size:16px;
-    ">
-        📞 Appeler vendeur
-    </a>
-
+    ">📞 Appeler vendeur</a>
 </div>
-    
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 <script>
 // ================= CONFIG =================
-
 const SHEET_ID = "1QD2yljHw-O2ijbhqDgqShKlEnSEFYWz6oRzUb4ENO8Q";
 const sheetBase = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
-
 const params = new URLSearchParams(window.location.search);
 const driverId = params.get("id");
 
 // ================= LOAD CSV =================
-
 function loadCSV(sheetName, callback){
     Papa.parse(sheetBase + sheetName, {
         download: true,
@@ -189,77 +225,70 @@ function loadCSV(sheetName, callback){
 }
 
 // ================= DRIVER =================
-
 loadCSV("chauffeurs", chauffeurs => {
-
     if(!driverId){
         document.getElementById("driverId").innerText = "Non fourni";
         return;
     }
-
     const driver = chauffeurs.find(c => 
         (c.id && c.id.trim() === driverId.trim()) ||
         (c.ID && c.ID.trim() === driverId.trim())
     );
-
     if(driver){
         document.getElementById("driverName").innerText = driver.nom + " " + driver.prenom;
         document.getElementById("driverStatus").innerText = driver.statut;
         document.getElementById("driverId").innerText = driver.id || driver.ID;
-          // ✅ AJOUT PHOTO
-        if(driver.photo_url){
-            document.getElementById("driverPhoto").src = driver.photo_url;
-        }
+        if(driver.photo_url){ document.getElementById("driverPhoto").src = driver.photo_url; }
     } else {
         document.getElementById("driverName").innerText = "Chauffeur non trouvé";
         document.getElementById("driverId").innerText = driverId;
     }
 });
 
-    
 // ================= ADS =================
-
 function showAds(sheet, elementId){
-
     loadCSV(sheet, data => {
-
         const container = document.getElementById(elementId);
         container.innerHTML = "";
-
         data.forEach(ad => {
-
             if(!ad.image_URL) return;
-
             const promo = document.createElement("div");
             promo.className = "promo-item";
 
-            // ================= GOLD & SILVER =================
-            if(sheet !== "publicites_bronze"){
-
+            // GOLD
+            if(sheet === "publicites_gold"){
                 promo.innerHTML = `
-                    <a href="${ad.localisation}" class="loc-btn" target="_blank">
-                        📍 Localiser
+                    <div class="gold-badge">⭐ GOLD PARTENAIRE</div>
+                    <a href="${ad.localisation}" class="loc-btn" target="_blank">📍 Localiser</a>
+                    <a href="${ad.lien_boutique}" target="_blank">
+                        <img src="${ad.image_URL}" alt="${ad.nom}">
                     </a>
+                    <div class="gold-btns">
+                        <a href="tel:${ad.telephone}" class="call">📞 Appeler</a>
+                        <a href="https://wa.me/${ad.telephone}" target="_blank" class="whatsapp">💬 WhatsApp</a>
+                        <a href="${ad.lien_boutique}" target="_blank" class="shop">🛒 Voir boutique</a>
+                    </div>
+                `;
+            }
+            // SILVER
+            else if(sheet === "publicites_silver"){
+                promo.innerHTML = `
+                    <a href="${ad.localisation}" class="loc-btn" target="_blank">📍 Localiser</a>
                     <a href="${ad.lien_boutique}" target="_blank">
                         <img src="${ad.image_URL}" alt="${ad.nom}">
                     </a>
                 `;
-
-            } 
-            // ================= BRONZE =================
+            }
+            // BRONZE
             else {
-
                 promo.innerHTML = `
-                    <img src="${ad.image_URL}" 
-                         alt="${ad.nom}" 
-                         style="cursor:pointer"
-                         onclick="openBronzePopup('${ad.image_URL}','${ad.telephone}')">
+                    <img src="${ad.image_URL}" alt="${ad.nom}" style="cursor:pointer"
+                        onclick="openBronzePopup('${ad.image_URL}','${ad.telephone}')">
                 `;
             }
 
             container.appendChild(promo);
         });
-
     });
 }
 
@@ -267,130 +296,58 @@ showAds("publicites_gold","goldAds");
 showAds("publicites_silver","silverAds");
 showAds("publicites_bronze","bronzeAds");
 
-// =============================
-// 🔥 LIEN CSV PUBLIÉ DIRECT
-// =============================
-
-const PUMP_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXrcDrR2-JCU7DLzRH1C8wTozquzcEhmjHCVzWQR16M2c5jpdqI3fwLKb0fJgChgJHy6Vx5OuRRxFO/pub?gid=1310866954&single=true&output=csv";
-
-let pumpsData = [];
-
-// Charger CSV publié
-Papa.parse(PUMP_CSV_URL, {
-    download: true,
-    header: true,
-    skipEmptyLines: true,
-    complete: function(results) {
-        pumpsData = results.data;
-        console.log("Pompes chargées PRO :", pumpsData);
-    }
-});
-
-// =============================
-// 📏 Calcul distance
-// =============================
-
-function getDistance(lat1, lon1, lat2, lon2) {
-
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-
-    const a =
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI / 180) *
-        Math.cos(lat2 * Math.PI / 180) *
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-    return R * c;
-}
-
-// =============================
-// 🚗 Trouver pompe la plus proche
-// =============================
-
-function findNearestPump() {
-
-    if (!pumpsData.length) {
-        alert("Les données des pompes ne sont pas encore chargées.");
-        return;
-    }
-
-    if (!navigator.geolocation) {
-        alert("La géolocalisation n'est pas supportée.");
-        return;
-    }
-
-    navigator.geolocation.getCurrentPosition(position => {
-
-        const userLat = position.coords.latitude;
-        const userLon = position.coords.longitude;
-
-        let nearest = null;
-        let minDistance = Infinity;
-
-        pumpsData.forEach(pump => {
-
-            if (!pump.latitude || !pump.longitude) return;
-
-            const lat = parseFloat(pump.latitude.trim());
-            const lon = parseFloat(pump.longitude.trim());
-
-            if (isNaN(lat) || isNaN(lon)) return;
-
-            const distance = getDistance(userLat, userLon, lat, lon);
-
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearest = pump;
-            }
-        });
-
-        if (nearest) {
-
-            let mapsUrl = nearest.lien_maps && nearest.lien_maps.trim() !== ""
-                ? nearest.lien_maps.trim()
-                : `https://www.google.com/maps/dir/?api=1&destination=${nearest.latitude},${nearest.longitude}`;
-
-            alert(
-                "🚗 Pompe la plus proche : " + nearest.nom_station +
-                "\n📍 Ville : " + nearest.ville +
-                "\n📏 Distance : " + minDistance.toFixed(2) + " km"
-            );
-
-            window.open(mapsUrl, "_blank");
-
-        } else {
-            alert("Aucune pompe valide trouvée.");
-        }
-
-    }, () => {
-        alert("Activez la localisation pour trouver la pompe la plus proche.");
-    });
-}
-
+// ================= POPUP BRONZE =================
 function openBronzePopup(imageUrl, phone){
-
     document.getElementById("popupImage").src = imageUrl;
-
     if(phone && phone.trim() !== ""){
         document.getElementById("callSellerBtn").href = "tel:" + phone;
         document.getElementById("callSellerBtn").style.display = "inline-block";
     } else {
         document.getElementById("callSellerBtn").style.display = "none";
     }
-
     document.getElementById("bronzePopup").style.display = "flex";
 }
-
-// Fermer popup quand on clique en dehors
 document.getElementById("bronzePopup").addEventListener("click", function(e){
-    if(e.target.id === "bronzePopup"){
-        this.style.display = "none";
-    }
+    if(e.target.id === "bronzePopup"){ this.style.display = "none"; }
 });
+
+// ================= POMPES =================
+const PUMP_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXrcDrR2-JCU7DLzRH1C8wTozquzcEhmjHCVzWQR16M2c5jpdqI3fwLKb0fJgChgJHy6Vx5OuRRxFO/pub?gid=1310866954&single=true&output=csv";
+let pumpsData = [];
+Papa.parse(PUMP_CSV_URL, { download:true, header:true, skipEmptyLines:true, complete: results => { pumpsData = results.data; } });
+
+function getDistance(lat1, lon1, lat2, lon2){
+    const R = 6371;
+    const dLat = (lat2 - lat1)*Math.PI/180;
+    const dLon = (lon2 - lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R*c;
+}
+
+function findNearestPump(){
+    if(!pumpsData.length){ alert("Les données des pompes ne sont pas encore chargées."); return; }
+    if(!navigator.geolocation){ alert("La géolocalisation n'est pas supportée."); return; }
+    navigator.geolocation.getCurrentPosition(position => {
+        const userLat = position.coords.latitude;
+        const userLon = position.coords.longitude;
+        let nearest = null;
+        let minDistance = Infinity;
+        pumpsData.forEach(pump => {
+            if(!pump.latitude || !pump.longitude) return;
+            const lat = parseFloat(pump.latitude.trim());
+            const lon = parseFloat(pump.longitude.trim());
+            if(isNaN(lat)||isNaN(lon)) return;
+            const distance = getDistance(userLat,userLon,lat,lon);
+            if(distance<minDistance){ minDistance = distance; nearest = pump; }
+        });
+        if(nearest){
+            let mapsUrl = nearest.lien_maps && nearest.lien_maps.trim()!="" ? nearest.lien_maps.trim() : `https://www.google.com/maps/dir/?api=1&destination=${nearest.latitude},${nearest.longitude}`;
+            alert(`🚗 Pompe la plus proche : ${nearest.nom_station}\n📍 Ville : ${nearest.ville}\n📏 Distance : ${minDistance.toFixed(2)} km`);
+            window.open(mapsUrl,"_blank");
+        } else { alert("Aucune pompe valide trouvée."); }
+    }, ()=>{ alert("Activez la localisation pour trouver la pompe la plus proche."); });
+}
 
 </script>
 
