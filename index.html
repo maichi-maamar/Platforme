@@ -79,6 +79,15 @@ body {
     display: block;
     border-radius: 15px;
 }
+ .driver-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #00c853;
+    margin: 10px auto;
+    display: block;
+}
 </style>
 </head>
 
@@ -88,6 +97,7 @@ body {
 
     <div class="card">
     <h3 id="driverTitle">Chauffeur Yassir</h3>
+    <img id="driverPhoto" src="" alt="Photo chauffeur" class="driver-photo">
     <h2 id="driverName">Chargement chauffeur...</h2>
     <p>ID : <span id="driverId">---</span></p>
     <div class="status" id="driverStatus"></div>
@@ -159,6 +169,10 @@ loadCSV("chauffeurs", chauffeurs => {
         document.getElementById("driverName").innerText = driver.nom + " " + driver.prenom;
         document.getElementById("driverStatus").innerText = driver.statut;
         document.getElementById("driverId").innerText = driver.id || driver.ID;
+          // ✅ AJOUT PHOTO
+        if(driver.photo_url){
+            document.getElementById("driverPhoto").src = driver.photo_url;
+        }
     } else {
         document.getElementById("driverName").innerText = "Chauffeur non trouvé";
         document.getElementById("driverId").innerText = driverId;
