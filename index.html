@@ -92,6 +92,16 @@ body {
         <div class="status">ACTIF</div>
     </div>
 
+<div class="section-title">Offres GOLD</div>
+    <div class="promo-grid" id="goldAds"></div>
+
+    <div class="section-title">Offres SILVER</div>
+    <div class="promo-grid" id="silverAds"></div>
+
+    <div class="section-title">Offres BRONZE</div>
+    <div class="promo-grid" id="bronzeAds"></div>
+    
+    
     <div class="section-title">⛽ Pompes Conventionnées</div>
 
     <button onclick="findNearestPump()" style="
@@ -111,6 +121,72 @@ body {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 
 <script>
+// ================= CONFIG =================
+
+const SHEET_ID = "1QD2yljHw-O2ijbhqDgqShKlEnSEFYWz6oRzUb4ENO8Q";
+const sheetBase = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
+
+const params = new URLSearchParams(window.location.search);
+const driverId = params.get("id");
+
+// ================= LOAD CSV =================
+
+function loadCSV(sheetName, callback){
+    Papa.parse(sheetBase + sheetName, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: results => callback(results.data)
+    });
+}
+
+// ================= DRIVER =================
+
+loadCSV("chauffeurs", chauffeurs => {
+
+    const driver = chauffeurs.find(c => c.id === driverId);
+
+    if(driver){
+        document.getElementById("driverName").innerText = driver.nom + " " + driver.prenom;
+        document.getElementById("driverStatus").innerText = driver.statut;
+        document.getElementById("driverId").innerText = driver.id;
+    } else {
+        document.getElementById("driverName").innerText = "Chauffeur non trouvé";
+    }
+});
+
+// ================= ADS =================
+
+function showAds(sheet, elementId){
+
+    loadCSV(sheet, data => {
+
+        const container = document.getElementById(elementId);
+        container.innerHTML = "";
+
+        data.forEach(ad => {
+
+            if(!ad.image_URL) return;
+
+            const promo = document.createElement("div");
+            promo.className = "promo-item";
+
+            promo.innerHTML = `
+                <a href="${ad.localisation}" class="loc-btn" target="_blank">📍 Localiser</a>
+                <a href="${ad.lien_boutique}" target="_blank">
+                    <img src="${ad.image_URL}" alt="${ad.nom}">
+                </a>
+            `;
+
+            container.appendChild(promo);
+        });
+
+    });
+}
+
+showAds("publicites_gold","goldAds");
+showAds("publicites_silver","silverAds");
+showAds("publicites_bronze","bronzeAds");
 
 // =============================
 // 🔥 LIEN CSV PUBLIÉ DIRECT
