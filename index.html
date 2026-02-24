@@ -58,7 +58,6 @@ body {
     position: relative;
     border-radius: 15px;
     overflow: hidden;
-    cursor: pointer;
 }
 
 .loc-btn {
@@ -81,32 +80,27 @@ body {
     border-radius: 15px;
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="container">
 
-    <!-- PROFIL CHAUFFEUR -->
     <div class="card">
         <h2 id="driverName">Chargement chauffeur...</h2>
         <p>ID : <span id="driverId"></span></p>
         <div class="status" id="driverStatus"></div>
     </div>
 
-    <!-- GOLD -->
     <div class="section-title">Offres GOLD</div>
     <div class="promo-grid" id="goldAds"></div>
 
-    <!-- SILVER -->
     <div class="section-title">Offres SILVER</div>
     <div class="promo-grid" id="silverAds"></div>
 
-    <!-- BRONZE -->
     <div class="section-title">Offres BRONZE</div>
     <div class="promo-grid" id="bronzeAds"></div>
 
-    <!-- SECTION POMPES -->
     <div class="section-title">⛽ Pompes Conventionnées</div>
 
     <button onclick="findNearestPump()" style="
@@ -127,32 +121,26 @@ body {
 
 <script>
 
-// ===============================
-// CONFIG GOOGLE SHEETS
-// ===============================
+// ================= CONFIG =================
 
 const SHEET_ID = "1QD2yljHw-O2ijbhqDgqShKlEnSEFYWz6oRzUb4ENO8Q";
 const sheetBase = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
 
-// Lire ID chauffeur depuis URL
 const params = new URLSearchParams(window.location.search);
 const driverId = params.get("id");
 
-// ===============================
-// FONCTION GENERALE CSV
-// ===============================
+// ================= LOAD CSV =================
 
 function loadCSV(sheetName, callback){
     Papa.parse(sheetBase + sheetName, {
         download: true,
         header: true,
+        skipEmptyLines: true,
         complete: results => callback(results.data)
     });
 }
 
-// ===============================
-// CHARGEMENT CHAUFFEUR
-// ===============================
+// ================= DRIVER =================
 
 loadCSV("chauffeurs", chauffeurs => {
 
@@ -164,13 +152,10 @@ loadCSV("chauffeurs", chauffeurs => {
         document.getElementById("driverId").innerText = driver.id;
     } else {
         document.getElementById("driverName").innerText = "Chauffeur non trouvé";
-        document.getElementById("driverStatus").innerText = "";
     }
 });
 
-// ===============================
-// AFFICHAGE PUBLICITÉS
-// ===============================
+// ================= ADS =================
 
 function showAds(sheet, elementId){
 
@@ -203,9 +188,7 @@ showAds("publicites_gold","goldAds");
 showAds("publicites_silver","silverAds");
 showAds("publicites_bronze","bronzeAds");
 
-// ===============================
-// POMPES CONVENTIONNÉES
-// ===============================
+// ================= POMPES =================
 
 let pumpsData = [];
 
@@ -213,7 +196,7 @@ loadCSV("pompes_conventionnees", data => {
     pumpsData = data;
 });
 
-// Calcul distance Haversine
+// Distance Haversine
 function getDistance(lat1, lon1, lat2, lon2) {
 
     const R = 6371;
@@ -256,8 +239,8 @@ function findNearestPump() {
 
             if (!pump.latitude || !pump.longitude) return;
 
-            const lat = parseFloat(pump.latitude);
-            const lon = parseFloat(pump.longitude);
+            const lat = parseFloat(pump.latitude.trim());
+            const lon = parseFloat(pump.longitude.trim());
 
             if (isNaN(lat) || isNaN(lon)) return;
 
@@ -270,9 +253,16 @@ function findNearestPump() {
         });
 
         if (nearest) {
-            const mapsUrl =
-                `https://www.google.com/maps/dir/?api=1&destination=${nearest.latitude},${nearest.longitude}`;
-            window.open(mapsUrl, "_blank");
+
+            // Si lien_maps existe on l'utilise
+            if (nearest.lien_maps && nearest.lien_maps.trim() !== "") {
+                window.open(nearest.lien_maps.trim(), "_blank");
+            } else {
+                const mapsUrl =
+                    `https://www.google.com/maps/dir/?api=1&destination=${nearest.latitude},${nearest.longitude}`;
+                window.open(mapsUrl, "_blank");
+            }
+
         } else {
             alert("Aucune pompe valide trouvée.");
         }
