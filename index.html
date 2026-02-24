@@ -196,8 +196,19 @@ function showAds(sheet, elementId){
             const promo = document.createElement("div");
             promo.className = "promo-item";
 
+            // 🔥 Ne pas afficher le bouton pour BRONZE
+            let localisationButton = "";
+
+            if(sheet !== "publicites_bronze"){
+                localisationButton = `
+                    <a href="${ad.localisation}" class="loc-btn" target="_blank">
+                        📍 Localiser
+                    </a>
+                `;
+            }
+
             promo.innerHTML = `
-                <a href="${ad.localisation}" class="loc-btn" target="_blank">📍 Localiser</a>
+                ${localisationButton}
                 <a href="${ad.lien_boutique}" target="_blank">
                     <img src="${ad.image_URL}" alt="${ad.nom}">
                 </a>
