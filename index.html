@@ -88,6 +88,59 @@ body {
     margin: 10px auto;
     display: block;
 }
+
+/* Badge GOLD animé */
+.gold-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(45deg, gold, orange);
+    color: black;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 3;
+    animation: glow 1.5s infinite alternate;
+}
+
+/* Glow animation */
+@keyframes glow {
+    from { box-shadow: 0 0 5px gold; }
+    to { box-shadow: 0 0 20px orange; }
+}
+
+/* Boutons GOLD en bas */
+.gold-btns {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.gold-btns a {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gold-btns a:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px gold;
+}
+
+.gold-btns .whatsapp {
+    background: #25D366;
+    color: white;
+}
+
+.gold-btns .call {
+    background: #00ff9d;
+}
 </style>
 </head>
 
