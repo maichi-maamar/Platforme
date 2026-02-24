@@ -155,18 +155,6 @@ loadCSV("chauffeurs", chauffeurs => {
     }
 });
 
-// =============================
-// 📌 Récupérer ID depuis URL
-// =============================
-
-const params = new URLSearchParams(window.location.search);
-const driverId = params.get("id");
-
-if (driverId) {
-    document.getElementById("driverId").innerText = driverId;
-} else {
-    document.getElementById("driverId").innerText = "Non défini";
-}
     
 // ================= ADS =================
 
