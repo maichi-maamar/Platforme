@@ -374,6 +374,23 @@ function generateCategoryButtons(){
     });
 }
 
+function getDistance(lat1, lon1, lat2, lon2){
+
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+
+    const a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    return R * c;
+}
+    
 // =============================
 // 📍 Trouver le plus proche par catégorie
 // =============================
@@ -381,51 +398,88 @@ function generateCategoryButtons(){
 function findNearestByCategory(category){
 
     if (!navigator.geolocation) {
-        alert("Géolocalisation non supportée.");
+        alert("❌ Géolocalisation non supportée par votre appareil.");
         return;
     }
 
-    navigator.geolocation.getCurrentPosition(position => {
+    navigator.geolocation.getCurrentPosition(
 
-        const userLat = position.coords.latitude;
-        const userLon = position.coords.longitude;
+        function(position){
 
-        let nearest = null;
-        let minDistance = Infinity;
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
 
-        partenairesData.forEach(partner => {
+            let nearest = null;
+            let minDistance = Infinity;
 
-            if(!partner.categorie) return;
-            if(partner.categorie.toLowerCase().trim() !== category.toLowerCase().trim()) return;
-            if(!partner.latitude || !partner.longitude) return;
+            partenairesData.forEach(partner => {
 
-            const lat = parseFloat(partner.latitude.replace(",", ".").trim());
-            const lon = parseFloat(partner.longitude.replace(",", ".").trim());
+                if(!partner.categorie) return;
+                if(partner.categorie.toLowerCase().trim() !== category.toLowerCase().trim()) return;
+                if(!partner.latitude || !partner.longitude) return;
 
-            if(isNaN(lat) || isNaN(lon)) return;
+                const lat = parseFloat(partner.latitude.replace(",", ".").trim());
+                const lon = parseFloat(partner.longitude.replace(",", ".").trim());
 
-            const distance = getDistance(userLat, userLon, lat, lon);
+                if(isNaN(lat) || isNaN(lon)) return;
 
-            if(distance < minDistance){
-                minDistance = distance;
-                nearest = partner;
+                const distance = getDistance(userLat, userLon, lat, lon);
+
+                if(distance < minDistance){
+                    minDistance = distance;
+                    nearest = partner;
+                }
+            });
+
+            if(!nearest){
+                alert("⚠️ Aucun partenaire trouvé pour : " + category);
+                return;
             }
-        });
 
-        if(nearest){
+            const lat = parseFloat(nearest.latitude.replace(",", ".").trim());
+            const lon = parseFloat(nearest.longitude.replace(",", ".").trim());
 
-    const lat = parseFloat(nearest.latitude.replace(",", ".").trim());
-    const lon = parseFloat(nearest.longitude.replace(",", ".").trim());
+            const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=driving`;
 
-    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
+            alert(
+                "🏆 " + category + " le plus proche : " + nearest.nom +
+                "\n📏 Distance : " + minDistance.toFixed(2) + " km"
+            );
 
-    alert(
-        "🏆 " + category + " le plus proche : " + nearest.nom +
-        "\n📏 Distance : " + minDistance.toFixed(2) + " km"
+            // Redirection FORCÉE Android
+            setTimeout(() => {
+                window.location.assign(mapsUrl);
+            }, 500);
+
+        },
+
+        function(error){
+
+            if(error.code === 1){
+                alert("❌ Autorisation localisation refusée.");
+            }
+            else if(error.code === 2){
+                alert("❌ Position indisponible.");
+            }
+            else if(error.code === 3){
+                alert("❌ Temps dépassé pour la localisation.");
+            }
+            else{
+                alert("❌ Erreur inconnue localisation.");
+            }
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+
     );
-
-    window.location.href = mapsUrl;
 }
+
+
 
       
     }, () => {
