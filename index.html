@@ -302,136 +302,44 @@ document.getElementById("bronzePopup").addEventListener("click", function(e){
     if(e.target.id === "bronzePopup"){ this.style.display = "none"; }
 });
 
-// =============================
-// 📦 Charger partenaires
-// =============================
+// ================= POMPES =================
+const PUMP_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXrcDrR2-JCU7DLzRH1C8wTozquzcEhmjHCVzWQR16M2c5jpdqI3fwLKb0fJgChgJHy6Vx5OuRRxFO/pub?gid=1310866954&single=true&output=csv";
+let pumpsData = [];
+Papa.parse(PUMP_CSV_URL, { download:true, header:true, skipEmptyLines:true, complete: results => { pumpsData = results.data; } });
 
-let partenairesData = [];
-
-loadCSV("partenaires_conventionnes", data => {
-    partenairesData = data;
-    generateCategoryButtons();
-});
-
-// =============================
-// 🎨 Icônes intelligentes
-// =============================
-
-function getCategoryIcon(category){
-
-    const cat = category.toLowerCase();
-
-    if(cat.includes("restaurant")) return "🍽️";
-    if(cat.includes("station")) return "⛽";
-    if(cat.includes("garage")) return "🛠️";
-    if(cat.includes("lavage")) return "🚗";
-    if(cat.includes("pneum")) return "🛞";
-    if(cat.includes("hotel")) return "🏨";
-    if(cat.includes("boutique")) return "🏬";
-    if(cat.includes("superette")) return "🛒";
-    if(cat.includes("pharmacie")) return "💊";
-    if(cat.includes("cafe")) return "☕";
-
-    return "📍";
+function getDistance(lat1, lon1, lat2, lon2){
+    const R = 6371;
+    const dLat = (lat2 - lat1)*Math.PI/180;
+    const dLon = (lon2 - lon1)*Math.PI/180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R*c;
 }
 
-// =============================
-// 🎯 Générer boutons automatiquement
-// =============================
-
-function generateCategoryButtons(){
-
-    const container = document.getElementById("categoryButtons");
-    container.innerHTML = "";
-
-    const categories = [...new Set(
-        partenairesData.map(p => p.categorie).filter(Boolean)
-    )];
-
-    categories.forEach(cat => {
-
-        const btn = document.createElement("button");
-
-        const icon = getCategoryIcon(cat);
-
-        btn.innerHTML = icon + " " + cat + " le plus proche";
-
-        btn.style.padding = "12px";
-        btn.style.borderRadius = "25px";
-        btn.style.border = "none";
-        btn.style.cursor = "pointer";
-        btn.style.background = "#00ff9d";
-        btn.style.fontWeight = "bold";
-        btn.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
-        btn.style.transition = "0.2s";
-
-        btn.onmouseover = () => btn.style.transform = "scale(1.05)";
-        btn.onmouseout = () => btn.style.transform = "scale(1)";
-
-        btn.onclick = () => findNearestByCategory(cat);
-
-        container.appendChild(btn);
-    });
-}
-
-// =============================
-// 📍 Trouver le plus proche par catégorie
-// =============================
-
-function findNearestByCategory(category){
-
-    if (!navigator.geolocation) {
-        alert("Géolocalisation non supportée.");
-        return;
-    }
-
+function findNearestPump(){
+    if(!pumpsData.length){ alert("Les données des pompes ne sont pas encore chargées."); return; }
+    if(!navigator.geolocation){ alert("La géolocalisation n'est pas supportée."); return; }
     navigator.geolocation.getCurrentPosition(position => {
-
         const userLat = position.coords.latitude;
         const userLon = position.coords.longitude;
-
         let nearest = null;
         let minDistance = Infinity;
-
-        partenairesData.forEach(partner => {
-
-            if(!partner.categorie) return;
-            if(partner.categorie.toLowerCase().trim() !== category.toLowerCase().trim()) return;
-            if(!partner.latitude || !partner.longitude) return;
-
-            const lat = parseFloat(partner.latitude.replace(",", ".").trim());
-            const lon = parseFloat(partner.longitude.replace(",", ".").trim());
-
-            if(isNaN(lat) || isNaN(lon)) return;
-
-            const distance = getDistance(userLat, userLon, lat, lon);
-
-            if(distance < minDistance){
-                minDistance = distance;
-                nearest = partner;
-            }
+        pumpsData.forEach(pump => {
+            if(!pump.latitude || !pump.longitude) return;
+            const lat = parseFloat(pump.latitude.trim());
+            const lon = parseFloat(pump.longitude.trim());
+            if(isNaN(lat)||isNaN(lon)) return;
+            const distance = getDistance(userLat,userLon,lat,lon);
+            if(distance<minDistance){ minDistance = distance; nearest = pump; }
         });
-
         if(nearest){
-
-    const lat = parseFloat(nearest.latitude.replace(",", ".").trim());
-    const lon = parseFloat(nearest.longitude.replace(",", ".").trim());
-
-    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
-
-    alert(
-        "🏆 " + category + " le plus proche : " + nearest.nom +
-        "\n📏 Distance : " + minDistance.toFixed(2) + " km"
-    );
-
-    window.location.href = mapsUrl;
+            let mapsUrl = nearest.lien_maps && nearest.lien_maps.trim()!="" ? nearest.lien_maps.trim() : `https://www.google.com/maps/dir/?api=1&destination=${nearest.latitude},${nearest.longitude}`;
+            alert(`🚗 Pompe la plus proche : ${nearest.nom_station}\n📍 Ville : ${nearest.ville}\n📏 Distance : ${minDistance.toFixed(2)} km`);
+            window.open(mapsUrl,"_blank");
+        } else { alert("Aucune pompe valide trouvée."); }
+    }, ()=>{ alert("Activez la localisation pour trouver la pompe la plus proche."); });
 }
 
-      
-    }, () => {
-        alert("Activez la localisation.");
-    });
-}
 
 </script>
 
