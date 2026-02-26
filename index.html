@@ -395,11 +395,13 @@ function findNearestByCategory(category){
 
         partenairesData.forEach(partner => {
 
-            if(partner.categorie !== category) return;
+            if(!partner.categorie) return;
+            if(partner.categorie.toLowerCase().trim() !== category.toLowerCase().trim()) return;
             if(!partner.latitude || !partner.longitude) return;
 
-            const lat = parseFloat(partner.latitude.trim());
-            const lon = parseFloat(partner.longitude.trim());
+            const lat = parseFloat(partner.latitude.replace(",", ".").trim());
+            const lon = parseFloat(partner.longitude.replace(",", ".").trim());
+
             if(isNaN(lat) || isNaN(lon)) return;
 
             const distance = getDistance(userLat, userLon, lat, lon);
@@ -421,7 +423,7 @@ function findNearestByCategory(category){
                 "\n📏 Distance : " + minDistance.toFixed(2) + " km"
             );
 
-            window.open(mapsUrl, "_blank");
+            window.location.href = mapsUrl;
 
         } else {
             alert("Aucun partenaire trouvé pour : " + category);
