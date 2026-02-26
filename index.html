@@ -414,16 +414,18 @@ function findNearestByCategory(category){
 
         if(nearest){
 
-            const mapsUrl = nearest.localisation && nearest.localisation.trim() !== ""
-                ? nearest.localisation.trim()
-                : `https://www.google.com/maps/dir/?api=1&destination=${nearest.latitude},${nearest.longitude}`;
+    const lat = parseFloat(nearest.latitude.replace(",", ".").trim());
+    const lon = parseFloat(nearest.longitude.replace(",", ".").trim());
 
-            alert(
-                "🏆 " + category + " le plus proche : " + nearest.nom +
-                "\n📏 Distance : " + minDistance.toFixed(2) + " km"
-            );
+    const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}`;
 
-            window.location.href = mapsUrl;
+    alert(
+        "🏆 " + category + " le plus proche : " + nearest.nom +
+        "\n📏 Distance : " + minDistance.toFixed(2) + " km"
+    );
+
+    window.location.href = mapsUrl;
+}
 
         } else {
             alert("Aucun partenaire trouvé pour : " + category);
