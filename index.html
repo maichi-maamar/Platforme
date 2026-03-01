@@ -31,6 +31,17 @@ body {
     box-shadow: 0 15px 50px rgba(0,0,0,0.6);
 }
 
+.status {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 6px 15px;
+    border-radius: 50px;
+    background: #00ff9d;
+    color: black;
+    font-size: 12px;
+    font-weight: bold;
+}
+
 .section-title {
     margin: 20px 0 10px;
     font-size: 18px;
@@ -38,20 +49,94 @@ body {
     text-align: center;
 }
 
-button {
-    padding: 12px;
-    border-radius: 25px;
-    border: none;
-    cursor: pointer;
-    background: #00ff9d;
-    font-weight: bold;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    transition: 0.2s;
+.promo-grid {
+    display: grid;
+    gap: 20px;
 }
 
-button:hover {
-    transform: scale(1.05);
+.promo-item {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
 }
+
+.loc-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #00ff9d;
+    color: black;
+    padding: 8px 14px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+    z-index: 2;
+}
+
+.promo-item img {
+    width: 100%;
+    display: block;
+    border-radius: 15px;
+}
+
+.driver-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #00c853;
+    margin: 10px auto;
+    display: block;
+}
+
+/* Badge GOLD animé */
+.gold-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(45deg, gold, orange);
+    color: black;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 3;
+    animation: glow 1.5s infinite alternate;
+}
+
+/* Glow animation */
+@keyframes glow {
+    from { box-shadow: 0 0 5px gold; }
+    to { box-shadow: 0 0 20px orange; }
+}
+
+/* Boutons GOLD en bas */
+.gold-btns {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.gold-btns a {
+    flex: 1;
+    padding: 10px;
+    border-radius: 20px;
+    text-align: center;
+    font-weight: bold;
+    text-decoration: none;
+    color: black;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.gold-btns a:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px gold;
+}
+
+.gold-btns .whatsapp { background: #25D366; color: white; }
+.gold-btns .call { background: #00ff9d; }
+.gold-btns .shop { background: #FFD700; color: black; }
 </style>
 </head>
 
@@ -59,21 +144,68 @@ button:hover {
 
 <div class="container">
 
-<div class="section-title">🤝 Partenaires Conventionnés</div>
-<div id="categoryButtons" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+    <div class="card">
+        <h3 id="driverTitle">Chauffeur Yassir</h3>
+        <img id="driverPhoto" src="" alt="Photo chauffeur" class="driver-photo">
+        <h2 id="driverName">Chargement chauffeur...</h2>
+        <p>ID : <span id="driverId">---</span></p>
+        <div class="status" id="driverStatus"></div>
+    </div>
 
+    <div class="section-title">Offres GOLD</div>
+    <div class="promo-grid" id="goldAds"></div>
+
+    <div class="section-title">Offres SILVER</div>
+    <div class="promo-grid" id="silverAds"></div>
+
+    <div class="section-title">Offres BRONZE</div>
+    <div class="promo-grid" id="bronzeAds"></div>
+    
+   <!-- ================= PARTENAIRES CONVENTIONNÉS ================= -->
+
+<div class="section-title">🤝 Partenaires Conventionnés</div>
+<div id="categoryButtons" style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px;"></div>
+
+<!-- POPUP BRONZE -->
+<div id="bronzePopup" style="
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.9);
+z-index:9999;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+">
+    <img id="popupImage" src="" style="
+        max-width:90%;
+        max-height:75%;
+        border-radius:20px;
+        margin-bottom:20px;
+    ">
+    <a id="callSellerBtn" href="#" style="
+        background:#00ff9d;
+        color:black;
+        padding:15px 25px;
+        border-radius:30px;
+        font-weight:bold;
+        text-decoration:none;
+        font-size:16px;
+    ">📞 Appeler vendeur</a>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
-
 <script>
 // ================= CONFIG =================
-
 const SHEET_ID = "1QD2yljHw-O2ijbhqDgqShKlEnSEFYWz6oRzUb4ENO8Q";
 const sheetBase = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=`;
+const params = new URLSearchParams(window.location.search);
+const driverId = params.get("id");
 
 // ================= LOAD CSV =================
-
 function loadCSV(sheetName, callback){
     Papa.parse(sheetBase + sheetName, {
         download: true,
@@ -83,7 +215,168 @@ function loadCSV(sheetName, callback){
     });
 }
 
-// ================= DISTANCE =================
+// ================= DRIVER =================
+loadCSV("chauffeurs", chauffeurs => {
+    if(!driverId){
+        document.getElementById("driverId").innerText = "Non fourni";
+        return;
+    }
+    const driver = chauffeurs.find(c => 
+        (c.id && c.id.trim() === driverId.trim()) ||
+        (c.ID && c.ID.trim() === driverId.trim())
+    );
+    if(driver){
+        document.getElementById("driverName").innerText = driver.nom + " " + driver.prenom;
+        document.getElementById("driverStatus").innerText = driver.statut;
+        document.getElementById("driverId").innerText = driver.id || driver.ID;
+        if(driver.photo_url){ document.getElementById("driverPhoto").src = driver.photo_url; }
+    } else {
+        document.getElementById("driverName").innerText = "Chauffeur non trouvé";
+        document.getElementById("driverId").innerText = driverId;
+    }
+});
+
+// ================= ADS =================
+function showAds(sheet, elementId){
+    loadCSV(sheet, data => {
+        const container = document.getElementById(elementId);
+        container.innerHTML = "";
+        data.forEach(ad => {
+            if(!ad.image_URL) return;
+            const promo = document.createElement("div");
+            promo.className = "promo-item";
+
+            // GOLD
+            if(sheet === "publicites_gold"){
+                promo.innerHTML = `
+                    <div class="gold-badge">⭐ GOLD PARTENAIRE</div>
+                    <a href="${ad.localisation}" class="loc-btn" target="_blank">📍 Localiser</a>
+                    <a href="${ad.lien_boutique}" target="_blank">
+                        <img src="${ad.image_URL}" alt="${ad.nom}">
+                    </a>
+                    <div class="gold-btns">
+                        <a href="tel:${ad.telephone}" class="call">📞 Appeler</a>
+                        <a href="https://wa.me/${ad.telephone}" target="_blank" class="whatsapp">💬 WhatsApp</a>
+                        <a href="${ad.lien_boutique}" target="_blank" class="shop">🛒 Voir boutique</a>
+                    </div>
+                `;
+            }
+            // SILVER
+            else if(sheet === "publicites_silver"){
+                promo.innerHTML = `
+                    <a href="${ad.localisation}" class="loc-btn" target="_blank">📍 Localiser</a>
+                    <a href="${ad.lien_boutique}" target="_blank">
+                        <img src="${ad.image_URL}" alt="${ad.nom}">
+                    </a>
+                `;
+            }
+            // BRONZE
+            else {
+                promo.innerHTML = `
+                    <img src="${ad.image_URL}" alt="${ad.nom}" style="cursor:pointer"
+                        onclick="openBronzePopup('${ad.image_URL}','${ad.telephone}')">
+                `;
+            }
+
+            container.appendChild(promo);
+        });
+    });
+}
+
+showAds("publicites_gold","goldAds");
+showAds("publicites_silver","silverAds");
+showAds("publicites_bronze","bronzeAds");
+
+// ================= POPUP BRONZE =================
+function openBronzePopup(imageUrl, phone){
+    document.getElementById("popupImage").src = imageUrl;
+    if(phone && phone.trim() !== ""){
+        document.getElementById("callSellerBtn").href = "tel:" + phone;
+        document.getElementById("callSellerBtn").style.display = "inline-block";
+    } else {
+        document.getElementById("callSellerBtn").style.display = "none";
+    }
+    document.getElementById("bronzePopup").style.display = "flex";
+}
+document.getElementById("bronzePopup").addEventListener("click", function(e){
+    if(e.target.id === "bronzePopup"){ this.style.display = "none"; }
+});
+
+// =============================
+// 📦 Charger partenaires
+// =============================
+
+let partenairesData = [];
+
+loadCSV("partenaires_conventionnes", data => {
+    partenairesData = data;
+    generateCategoryButtons();
+});
+
+// =============================
+// 🎨 Icônes intelligentes
+// =============================
+
+function getCategoryIcon(category){
+
+    const cat = category.toLowerCase();
+
+    if(cat.includes("restaurant")) return "🍽️";
+    if(cat.includes("station")) return "⛽";
+    if(cat.includes("garage")) return "🛠️";
+    if(cat.includes("lavage")) return "🚗";
+    if(cat.includes("pneum")) return "🛞";
+    if(cat.includes("hotel")) return "🏨";
+    if(cat.includes("boutique")) return "🏬";
+    if(cat.includes("superette")) return "🛒";
+    if(cat.includes("pharmacie")) return "💊";
+    if(cat.includes("cafe")) return "☕";
+
+    return "📍";
+}
+
+// =============================
+// 🎯 Générer boutons automatiquement
+// =============================
+
+function generateCategoryButtons(){
+
+    const container = document.getElementById("categoryButtons");
+    container.innerHTML = "";
+
+    const categories = [...new Set(
+        partenairesData.map(p => p.categorie).filter(Boolean)
+    )];
+
+    categories.forEach(cat => {
+
+        const btn = document.createElement("button");
+
+        const icon = getCategoryIcon(cat);
+
+        btn.innerHTML = icon + " " + cat + " le plus proche";
+
+        btn.style.padding = "12px";
+        btn.style.borderRadius = "25px";
+        btn.style.border = "none";
+        btn.style.cursor = "pointer";
+        btn.style.background = "#00ff9d";
+        btn.style.fontWeight = "bold";
+        btn.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
+        btn.style.transition = "0.2s";
+
+        btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+        btn.onmouseout = () => btn.style.transform = "scale(1)";
+
+        btn.onclick = () => findNearestByCategory(cat);
+
+        container.appendChild(btn);
+    });
+}
+
+// =============================
+// 📏 Calcul distance (OBLIGATOIRE)
+// =============================
 
 function getDistance(lat1, lon1, lat2, lon2){
 
@@ -101,71 +394,15 @@ function getDistance(lat1, lon1, lat2, lon2){
 
     return R * c;
 }
-
-// ================= PARTENAIRES =================
-
-let partenairesData = [];
-
-loadCSV("partenaires_conventionnes", data => {
-
-    partenairesData = data.filter(p => p.latitude && p.longitude);
-
-    if(partenairesData.length === 0){
-        alert("⚠️ Aucun partenaire chargé.");
-        return;
-    }
-
-    generateCategoryButtons();
-});
-
-// ================= ICONES =================
-
-function getCategoryIcon(category){
-
-    const cat = category.toLowerCase();
-
-    if(cat.includes("restaurant")) return "🍽️";
-    if(cat.includes("pompe") || cat.includes("station")) return "⛽";
-    if(cat.includes("garage")) return "🛠️";
-    if(cat.includes("superette")) return "🛒";
-
-    return "📍";
-}
-
-// ================= BOUTONS =================
-
-function generateCategoryButtons(){
-
-    const container = document.getElementById("categoryButtons");
-    container.innerHTML = "";
-
-    const categories = [...new Set(
-        partenairesData.map(p => p.categorie.trim())
-    )];
-
-    categories.forEach(cat => {
-
-        const btn = document.createElement("button");
-
-        btn.innerHTML = getCategoryIcon(cat) + " " + cat + " le plus proche";
-
-        btn.onclick = () => findNearestByCategory(cat);
-
-        container.appendChild(btn);
-    });
-}
-
-// ================= LOCALISATION =================
+    
+// =============================
+// 📍 Trouver le plus proche par catégorie
+// =============================
 
 function findNearestByCategory(category){
 
-    if(partenairesData.length === 0){
-        alert("Données partenaires non chargées.");
-        return;
-    }
-
     if (!navigator.geolocation) {
-        alert("❌ Géolocalisation non supportée.");
+        alert("❌ Géolocalisation non supportée par votre appareil.");
         return;
     }
 
@@ -182,11 +419,11 @@ function findNearestByCategory(category){
             partenairesData.forEach(partner => {
 
                 if(!partner.categorie) return;
+                if(partner.categorie.toLowerCase().trim() !== category.toLowerCase().trim()) return;
+                if(!partner.latitude || !partner.longitude) return;
 
-                if(partner.categorie.trim().toLowerCase() !== category.trim().toLowerCase()) return;
-
-                const lat = parseFloat(partner.latitude.replace(",", "."));
-                const lon = parseFloat(partner.longitude.replace(",", "."));
+                const lat = parseFloat(partner.latitude.replace(",", ".").trim());
+                const lon = parseFloat(partner.longitude.replace(",", ".").trim());
 
                 if(isNaN(lat) || isNaN(lon)) return;
 
@@ -199,23 +436,42 @@ function findNearestByCategory(category){
             });
 
             if(!nearest){
-                alert("Aucun partenaire trouvé.");
+                alert("⚠️ Aucun partenaire trouvé pour : " + category);
                 return;
             }
 
+            const lat = parseFloat(nearest.latitude.replace(",", ".").trim());
+            const lon = parseFloat(nearest.longitude.replace(",", ".").trim());
+
+            const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=driving`;
+
             alert(
-                "🏆 " + nearest.nom +
+                "🏆 " + category + " le plus proche : " + nearest.nom +
                 "\n📏 Distance : " + minDistance.toFixed(2) + " km"
             );
 
-            const mapsUrl =
-                `https://www.google.com/maps/dir/?api=1&destination=${nearest.latitude},${nearest.longitude}&travelmode=driving`;
+            // Redirection FORCÉE Android
+            setTimeout(() => {
+                window.location.assign(mapsUrl);
+            }, 500);
 
-            window.location.href = mapsUrl;
         },
 
         function(error){
-            alert("⚠️ Activez la localisation dans votre téléphone.");
+
+            if(error.code === 1){
+                alert("❌ Autorisation localisation refusée.");
+            }
+            else if(error.code === 2){
+                alert("❌ Position indisponible.");
+            }
+            else if(error.code === 3){
+                alert("❌ Temps dépassé pour la localisation.");
+            }
+            else{
+                alert("❌ Erreur inconnue localisation.");
+            }
+
         },
 
         {
@@ -226,6 +482,7 @@ function findNearestByCategory(category){
 
     );
 }
+
 
 </script>
 
