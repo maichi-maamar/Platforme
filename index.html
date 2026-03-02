@@ -440,20 +440,29 @@ function findNearestByCategory(category){
                 return;
             }
 
-            const lat = parseFloat(nearest.latitude.replace(",", ".").trim());
-            const lon = parseFloat(nearest.longitude.replace(",", ".").trim());
-
-            const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=driving`;
-
             alert(
                 "🏆 " + category + " le plus proche : " + nearest.nom +
                 "\n📏 Distance : " + minDistance.toFixed(2) + " km"
             );
 
-            // Redirection FORCÉE Android
-            setTimeout(() => {
-                window.location.assign(mapsUrl);
-            }, 500);
+            // ✅ PRIORITÉ AU LIEN GOOGLE MAPS EXACT
+            if(nearest.maps_url && nearest.maps_url.trim() !== ""){
+                setTimeout(() => {
+                    window.location.assign(nearest.maps_url);
+                }, 500);
+            }
+            else{
+                // 🔁 Fallback si maps_url absent
+                const lat = parseFloat(nearest.latitude.replace(",", ".").trim());
+                const lon = parseFloat(nearest.longitude.replace(",", ".").trim());
+
+                const mapsUrl =
+                `https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}&travelmode=driving`;
+
+                setTimeout(() => {
+                    window.location.assign(mapsUrl);
+                }, 500);
+            }
 
         },
 
@@ -482,6 +491,8 @@ function findNearestByCategory(category){
 
     );
 }
+
+       
 
 
 </script>
